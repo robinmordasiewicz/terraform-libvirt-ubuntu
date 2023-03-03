@@ -1,25 +1,28 @@
 #cloud-config
 # vim: syntax=yaml
-fqdn: workstation
 package_update: true
 package_upgrade: true
+hostname: workstation
+fqdn: workstation.example.com
+prefer_fqdn_over_hostname: true
+power_state:
+  mode: reboot
 package_reboot_if_required: True
 apt:
    - source: deb http://archive.ubuntu.com/ubuntu karmic-backports main universe multiverse restricted
 ssh_pwauth: 1
+password: ubuntu
 byobu_by_default: enable-system
-chpasswd:
-  list: |
-    ubuntu:ubuntu
-  expire: False
+system_info:
+    default_user:
+      name: ubuntu
+      home: /home/ubuntu
+      lock_passwd: false
+      sudo: ALL=(ALL) NOPASSWD:ALL
+      shell: /bin/zsh
+      groups: [adm, audio, cdrom, dialout, floppy, video, plugdev, dip, netdev, libvirtd]
 users:
-  - name: ubuntu
-    sudo: ALL=(ALL) NOPASSWD:ALL
-    home: /home/ubuntu
-    shell: /bin/zsh
-    groups: [adm, audio, cdrom, dialout, floppy, video, plugdev, dip, netdev, libvirtd]
-    lock_passwd: False
-    gecos: Ubuntu
+  - default
 packages:
   - qemu-guest-agent
   - vim
