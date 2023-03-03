@@ -52,8 +52,8 @@ runcmd:
   - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor --yes -o /usr/share/keyrings/docker-archive-keyring.gpg
   - chmod a+r /usr/share/keyrings/docker-archive-keyring.gpg
   - echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
-  - apt update -y
-  - apt install -y docker-ce
+  - apt-get update -y
+  - apt-get install -y docker-ce
   - usermod -aG docker ubuntu
   - systemctl enable docker
   - systemctl start docker
@@ -61,7 +61,7 @@ runcmd:
   - chmod a+r /usr/share/keyrings/kubernetes-archive-keyring.gpg
   - echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
   - apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys B53DC80D13EDEF05
-  - apt update
+  - apt-get update
   - apt-get install -y kubectl
   - kubectl completion bash > /etc/bash_completion.d/kubectl > /dev/null
   - curl -LO "https://vesio.azureedge.net/releases/vesctl/$(curl -s https://downloads.volterra.io/releases/vesctl/latest.txt)/vesctl.linux-amd64.gz"
@@ -73,15 +73,15 @@ runcmd:
   - wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor > /usr/share/keyrings/hashicorp-archive-keyring.gpg
   - echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" > /etc/apt/sources.list.d/hashicorp.list
   - chmod a+r /usr/share/keyrings/hashicorp-archive-keyring.gpg
-  - apt update
-  - apt install terraform
+  - apt-get update
+  - apt-get install terraform
   - apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0 
   - curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | gpg --dearmor --yes -o /usr/share/keyrings/githubcli-archive-keyring.gpg
   - chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
   - echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null
-  - apt update
-  - apt install gh -y
-  - pip install sphobjinv
+  - apt-get update
+  - apt-get install gh -y
+  - pip3 install sphobjinv
 write_files:
   - path: /etc/sysctl.d/10-disable-ipv6.conf
     permissions: 0644
