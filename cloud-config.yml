@@ -7,11 +7,17 @@ fqdn: workstation.example.com
 prefer_fqdn_over_hostname: true
 power_state:
   mode: reboot
+  delay: now
+  message: Rebooting the OS
+  condition: if [ -e /var/run/reboot-required ]; then exit 0; else exit 1; fi
 package_reboot_if_required: True
 ssh_pwauth: true
 password: ubuntu
 apt:
   sources:
+      microsoft:
+          source: "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
+          keyid: "EB3E94ADBE1229CF"
       kubernetes:
           source: "deb [arch=amd64] https://apt.kubernetes.io/ kubernetes-xenial main"
           keyid: "B53DC80D13EDEF05"
@@ -64,11 +70,14 @@ packages:
   - docker-ce
   - gh
   - terraform
+  - code
 runcmd:
+  - sysctl -w net.ipv6.conf.all.disable_ipv6=1
+  - sysctl -w net.ipv6.conf.default.disable_ipv6=1
+  - sysctl -w net.ipv6.conf.lo.disable_ipv6=1
   - [ systemctl, daemon-reload ]
   - [ systemctl, enable, qemu-guest-agent ]
   - [ systemctl, start, qemu-guest-agent ]
-  - [ systemctl, restart, systemd-sysctl ]
   - systemctl enable docker
   - systemctl start docker
   - curl -LO "https://vesio.azureedge.net/releases/vesctl/$(curl -s https://downloads.volterra.io/releases/vesctl/latest.txt)/vesctl.linux-amd64.gz"
