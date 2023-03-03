@@ -8,19 +8,21 @@ prefer_fqdn_over_hostname: true
 power_state:
   mode: reboot
 package_reboot_if_required: True
-apt:
-   - source: deb http://archive.ubuntu.com/ubuntu karmic-backports main universe multiverse restricted
-ssh_pwauth: 1
+ssh_pwauth: true
 password: ubuntu
+apt:
+  - sources:
+      source1:
+        source: "deb http://archive.ubuntu.com/ubuntu karmic-backports main universe multiverse restricted"
 byobu_by_default: enable-system
 system_info:
-    default_user:
-      name: ubuntu
-      home: /home/ubuntu
-      lock_passwd: false
-      sudo: ALL=(ALL) NOPASSWD:ALL
-      shell: /bin/zsh
-      groups: [adm, audio, cdrom, dialout, floppy, video, plugdev, dip, netdev, libvirtd]
+  default_user:
+    name: ubuntu
+    home: /home/ubuntu
+    lock_passwd: false
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/zsh
+    groups: [adm, audio, cdrom, dialout, floppy, video, plugdev, dip, netdev, libvirtd]
 users:
   - default
 packages:
@@ -86,9 +88,11 @@ runcmd:
   - apt-get update
   - apt-get install gh -y
   - pip3 install sphobjinv
+  - 'usermod -u 502 ubuntu'
+  - 'groupmod -g 20 ubuntu'
 write_files:
   - path: /etc/sysctl.d/10-disable-ipv6.conf
-    permissions: 0644
+    permissions: '0644'
     owner: root
     content: |
       net.ipv6.conf.all.disable_ipv6 = 1
