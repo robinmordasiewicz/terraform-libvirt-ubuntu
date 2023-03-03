@@ -15,17 +15,20 @@ ssh_pwauth: true
 password: ubuntu
 apt:
   sources:
-      microsoft:
-          source: "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
+      powershell:
+          source: "deb [arch=amd64 signed-by=$KEY_FILE] https://packages.microsoft.com/ubuntu/22.04/prod jammy main"
+          keyid: "EB3E94ADBE1229CF"
+      vscode:
+          source: "deb [arch=amd64 signed-by=$KEY_FILE] https://packages.microsoft.com/repos/vscode stable main"
           keyid: "EB3E94ADBE1229CF"
       kubernetes:
-          source: "deb [arch=amd64] https://apt.kubernetes.io/ kubernetes-xenial main"
+          source: "deb [arch=amd64 signed-by=$KEY_FILE] https://apt.kubernetes.io/ kubernetes-xenial main"
           keyid: "B53DC80D13EDEF05"
       docker: 
-          source: "deb [arch=amd64] https://download.docker.com/linux/ubuntu jammy stable"
+          source: "deb [arch=amd64 signed-by=$KEY_FILE] https://download.docker.com/linux/ubuntu jammy stable"
           keyid: "8D81803C0EBFCD88"
       github-cli:
-          source: "deb [arch=amd64] https://cli.github.com/packages stable main"
+          source: "deb [arch=amd64 signed-by=$KEY_FILE] https://cli.github.com/packages stable main"
           keyid: "23F3D4EA75716059"
       hashicorp:
           source: "deb [signed-by=$KEY_FILE] https://apt.releases.hashicorp.com jammy main"
@@ -71,6 +74,7 @@ packages:
   - gh
   - terraform
   - code
+  - powershell
 runcmd:
   - sysctl -w net.ipv6.conf.all.disable_ipv6=1
   - sysctl -w net.ipv6.conf.default.disable_ipv6=1
