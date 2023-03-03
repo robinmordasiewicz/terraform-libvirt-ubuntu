@@ -5,6 +5,8 @@ package_update: true
 package_upgrade: true
 apt_upgrade: True
 apt_reboot_if_required: True
+apt_sources:
+   - source: deb http://archive.ubuntu.com/ubuntu karmic-backports main universe multiverse restricted
 ssh_pwauth: 1
 byobu_by_default: enable-system
 chpasswd:
@@ -21,7 +23,7 @@ users:
     gecos: Ubuntu
 packages:
   - qemu-guest-agent
-  - vim
+  - vim-enhanced
   - git
   - zsh
   - software-properties-common
@@ -41,6 +43,8 @@ packages:
   - python3.9
   - build-essential
   - fonts-powerline
+  - powerline
+  - fzf
 runcmd:
   - [ systemctl, daemon-reload ]
   - [ systemctl, enable, qemu-guest-agent ]
