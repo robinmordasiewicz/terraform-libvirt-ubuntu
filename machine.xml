@@ -1,5 +1,0 @@
-  <metadata>
-    <libosinfo:libosinfo xmlns:libosinfo="http://libosinfo.org/xmlns/libvirt/domain/1.0">
-      <libosinfo:os id="http://ubuntu.com/ubuntu/22.04"/>
-    </libosinfo:libosinfo>
-  </metadata>
