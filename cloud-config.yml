@@ -3,9 +3,8 @@
 fqdn: workstation
 package_update: true
 package_upgrade: true
-apt_upgrade: True
-apt_reboot_if_required: True
-apt_sources:
+package_reboot_if_required: True
+apt:
    - source: deb http://archive.ubuntu.com/ubuntu karmic-backports main universe multiverse restricted
 ssh_pwauth: 1
 byobu_by_default: enable-system
@@ -23,7 +22,7 @@ users:
     gecos: Ubuntu
 packages:
   - qemu-guest-agent
-  - vim-enhanced
+  - vim
   - git
   - zsh
   - software-properties-common
