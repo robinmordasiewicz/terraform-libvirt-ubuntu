@@ -27,14 +27,9 @@ resource "libvirt_volume" "ubuntu-image" {
   size           = 10737418240
 }
 
-#data "template_file" "network_config" {
-# template = file("${path.module}/network_config.cfg")
-#}
-
 resource "libvirt_cloudinit_disk" "cloud-config" {
   name           = "cloud-config.iso"
   user_data      = data.template_file.user_data.rendered
-  #network_config = data.template_file.network_config.rendered
   pool           = "default"
 }
 
@@ -59,10 +54,6 @@ resource "libvirt_domain" "ubuntu" {
   macvtap = "enp109s0"
   wait_for_lease = true
  }
-
-  #provisioner "local-exec" {
-  #  command = "virsh qemu-agent-command ubuntu '{\"execute\":\"guest-network-get-interfaces\"}'|jq     '.return[1].\"ip-addresses\"[0].\"ip-address\"'| sed 's/\"//g'"
-  #}
 
  cpu {
   mode = "host-passthrough"
