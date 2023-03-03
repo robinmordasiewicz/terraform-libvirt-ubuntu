@@ -1,0 +1,101 @@
+#cloud-config
+# vim: syntax=yaml
+fqdn: workstation
+package_update: true
+package_upgrade: true
+apt_upgrade: True
+apt_reboot_if_required: True
+ssh_pwauth: 1
+byobu_by_default: enable-system
+chpasswd:
+  list: |
+    ubuntu:ubuntu
+  expire: False
+users:
+  - name: ubuntu
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    home: /home/ubuntu
+    shell: /bin/zsh
+    groups: [adm, audio, cdrom, dialout, floppy, video, plugdev, dip, netdev, libvirtd]
+    lock_passwd: False
+    gecos: Ubuntu
+packages:
+  - qemu-guest-agent
+  - vim
+  - git
+  - zsh
+  - software-properties-common
+  - gnupg2
+  - curl
+  - apt-transport-https 
+  - gnupg-agent
+  - ca-certificates
+  - lsb-release
+  - bash-completion
+  - wget
+  - jq
+  - yamllint
+  - moreutils
+  - python3-sphinx
+  - python3-pip
+  - python3.9
+  - build-essential
+  - fonts-powerline
+  - zsh-syntax-highlighting
+  - zsh-autosuggestions
+runcmd:
+  - [ systemctl, daemon-reload ]
+  - [ systemctl, enable, qemu-guest-agent ]
+  - [ systemctl, start, qemu-guest-agent ]
+  - [ systemctl, restart, systemd-sysctl ]
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor --yes -o /usr/share/keyrings/docker-archive-keyring.gpg
+  - chmod a+r /usr/share/keyrings/docker-archive-keyring.gpg
+  - echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+  - apt update -y
+  - apt install -y docker-ce
+  - usermod -aG docker ubuntu
+  - systemctl enable docker
+  - systemctl start docker
+  - curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+  - chmod a+r /usr/share/keyrings/kubernetes-archive-keyring.gpg
+  - echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
+  - apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys B53DC80D13EDEF05
+  - apt update
+  - apt-get install -y kubectl
+  - kubectl completion bash > /etc/bash_completion.d/kubectl > /dev/null
+  - curl -LO "https://vesio.azureedge.net/releases/vesctl/$(curl -s https://downloads.volterra.io/releases/vesctl/latest.txt)/vesctl.linux-amd64.gz"
+  - gunzip vesctl.linux-amd64.gz
+  - mv vesctl.linux-amd64 /usr/local/bin/vesctl
+  - chown root:root /usr/local/bin/vesctl
+  - chmod 755 /usr/local/bin/vesctl
+  - vesctl completion bash > /etc/bash_completion.d/vesctl > /dev/null
+  - wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor > /usr/share/keyrings/hashicorp-archive-keyring.gpg
+  - echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" > /etc/apt/sources.list.d/hashicorp.list
+  - chmod a+r /usr/share/keyrings/hashicorp-archive-keyring.gpg
+  - apt update
+  - apt install terraform
+  - apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0 
+  - curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | gpg --dearmor --yes -o /usr/share/keyrings/githubcli-archive-keyring.gpg
+  - chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+  - echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+  - apt update
+  - apt install gh -y
+  - pip install sphobjinv
+write_files:
+  - path: /etc/sysctl.d/10-disable-ipv6.conf
+    permissions: 0644
+    owner: root
+    content: |
+      net.ipv6.conf.all.disable_ipv6 = 1
+      net.ipv6.conf.default.disable_ipv6 = 1
+      net.ipv6.conf.lo.disable_ipv6 = 1
+ansible:
+  install_method: distro
+  package_name: ansible
+  run_user: ubuntu
+  galaxy:
+    actions:
+      - ["ansible-galaxy", "install", "gantsign.oh-my-zsh"]
+  pull:
+    url: "https://github.com/robinmordasiewicz/linux-userland.git"
+    playbook_name: "userland.yml"

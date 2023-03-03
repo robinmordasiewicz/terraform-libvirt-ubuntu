@@ -1,0 +1,27 @@
+#cloud-config
+# vim: syntax=yaml
+fqdn: workstation
+package_update: true
+package_upgrade: true
+ssh_pwauth: 1
+byobu_by_default: system
+chpasswd:
+  list: |
+    ubuntu:ubuntu
+  expire: False
+users:
+  - default
+packages:
+  - qemu-guest-agent
+  - vim
+  - git
+runcmd:
+  - [ systemctl, daemon-reload ]
+  - [ systemctl, enable, qemu-guest-agent ]
+  - [ systemctl, start, qemu-guest-agent ]
+  - sed -i -e '/^ENABLED=1/s/^.*$/ENABLED=0/' /etc/default/motd-news
+  - sed -i -e '/^session    optional   pam_motd.so motd=/run/motd.dynamics/^.*$/#session    optional   pam_motd.so motd=/run/motd.dynamic/' /etc/pam.d/login
+  - sed -i -e '/^session    optional   pam_motd.so motd=/run/motd.dynamics/^.*$/#session    optional   pam_motd.so motd=/run/motd.dynamic/' /etc/pam.d/sshd
+  - sed -i -e '/^session    optional   pam_motd.so noupdate/s/^.*$/#session    optional   pam_motd.so noupdate' /etc/pam.d/sshd
+  - sed -i -e '/^session    optional   pam_motd.so noupdate/s/^.*$/#session    optional   pam_motd.so noupdate' /etc/pam.d/login
+  - chmod -x /etc/update-motd.d/10-help-text
