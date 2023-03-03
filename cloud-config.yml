@@ -41,8 +41,6 @@ packages:
   - python3.9
   - build-essential
   - fonts-powerline
-  - zsh-syntax-highlighting
-  - zsh-autosuggestions
 runcmd:
   - [ systemctl, daemon-reload ]
   - [ systemctl, enable, qemu-guest-agent ]
