@@ -11,9 +11,9 @@ package_reboot_if_required: True
 ssh_pwauth: true
 password: ubuntu
 apt:
-  - sources:
+  sources:
       source1:
-        source: "deb http://archive.ubuntu.com/ubuntu karmic-backports main universe multiverse restricted"
+          source: "deb http://archive.ubuntu.com/ubuntu karmic-backports main universe multiverse restricted"
 byobu_by_default: enable-system
 system_info:
   default_user:
