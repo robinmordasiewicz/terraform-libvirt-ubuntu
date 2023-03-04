@@ -23,7 +23,7 @@ apt:
           source: "deb [arch=amd64 signed-by=$KEY_FILE] https://packages.microsoft.com/repos/vscode stable main"
           keyid: "EB3E94ADBE1229CF"
       teams:
-          source: "deb [arch=amd64 signed-by=$KEY_FILE] http://packages.microsoft.com/repos/ms-teams stable main"
+          source: "deb [arch=amd64] https://packages.microsoft.com/repos/ms-teams stable main"
           keyid: "EB3E94ADBE1229CF"
       kubernetes:
           source: "deb [arch=amd64 signed-by=$KEY_FILE] https://apt.kubernetes.io/ kubernetes-xenial main"
