@@ -45,7 +45,7 @@ mounts:
   - ["192.168.1.17:/volume1/homes", "/home", "nfs4", "rw,hard,intr,rsize=8192,wsize=8192,timeo=14", "0", "0"]
 system_info:
   default_user:
-    name: ubuntu
+    name: robin
     shell: /bin/zsh
     primary_group: dialout
     no_user_group: true
@@ -105,8 +105,8 @@ runcmd:
   - chown root:root /usr/local/bin/vesctl
   - chmod 755 /usr/local/bin/vesctl
   - vesctl completion bash > /etc/bash_completion.d/vesctl > /dev/null
-  - usermod -u 502 ubuntu
-  - groupmod -n ubuntu dialout
+  - usermod -u 502 robin
+  - groupmod -n staff dialout
 write_files:
   - path: /etc/sysctl.d/10-disable-ipv6.conf
     permissions: '0644'
@@ -118,7 +118,7 @@ write_files:
 ansible:
   install_method: distro
   package_name: ansible
-  run_user: ubuntu
+  run_user: robin
   galaxy:
     actions:
       - ["ansible-galaxy", "install", "gantsign.oh-my-zsh"]
