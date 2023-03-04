@@ -107,7 +107,10 @@ runcmd:
   - chmod 755 /usr/local/bin/vesctl
   - vesctl completion bash > /etc/bash_completion.d/vesctl > /dev/null
   - usermod -u 502 robin
-  - groupmod -n staff dialout
+  - groupmod -g 1000 dialout
+  - groupmod -g 20 staff
+  - groupmod -g 50 dialout
+  - groupmod -n mordasiewicz staff
 write_files:
   - path: /etc/sysctl.d/10-disable-ipv6.conf
     permissions: '0644'
