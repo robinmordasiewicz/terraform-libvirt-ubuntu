@@ -12,8 +12,8 @@ terraform {
 }
 
 provider "libvirt" {
- uri = "qemu:///system"
- #uri = "qemu+ssh://robin@localhost/system?keyfile=/home/robin/.ssh/id_rsa"
+ #uri = "qemu:///system"
+ uri = "qemu+ssh://robin@192.168.1.95/system?keyfile=/home/robin/.ssh/id_ed25519"
 }
 
 # We fetch the latest ubuntu release image from their mirrors
@@ -33,12 +33,9 @@ resource "libvirt_volume" "ubuntu-image" {
 
 resource "libvirt_cloudinit_disk" "cloud-config" {
   name           = "cloud-config.iso"
-  user_data      = data.template_file.user_data.rendered
+  user_data      = templatefile("${path.module}/cloud-config.yml", {
+  })
   pool           = "default"
-}
-
-data "template_file" "user_data" {
-  template = file("${path.module}/cloud-config.yml")
 }
 
 resource "libvirt_domain" "ubuntu" {
