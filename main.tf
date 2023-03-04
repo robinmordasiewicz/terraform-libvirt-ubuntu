@@ -108,11 +108,32 @@ resource "local_file" "private_key" {
   file_permission = "0600"
 }
 
-output "ip" {
-  value = libvirt_domain.ubuntu.*.network_interface.0.addresses
+ssh_keys_user = {
+  write_files = [
+    {
+      path        = "/home/ubuntu/.ssh/id_rsa"
+      content     = file("/home/ubuntu/.ssh/id_rsa")
+      owner       = "ubuntu"
+      permissions = "0600"
+      defer       = true
+    },
+    {
+      path        = "/home/ubuntu/.ssh/id_rsa.pub"
+      content     = file("/home/ubuntu/.ssh/id_rsa.pub")
+      owner       = "ubuntu"
+      permissions = "0644"
+      defer       = true
+    }
+  ]
 }
+
 
 output "ssh_private_key" {
   value     = tls_private_key.ssh.private_key_pem
   sensitive = true
+  filename        = "ssh_private_key.pem"
+}
+
+output "ip" {
+  value = libvirt_domain.ubuntu.*.network_interface.0.addresses
 }
