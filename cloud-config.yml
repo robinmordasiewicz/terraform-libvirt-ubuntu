@@ -94,6 +94,7 @@ runcmd:
   - pip3 install sphobjinv
   - 'usermod -u 502 ubuntu'
   - 'groupmod -n ubuntu dialout'
+  - 'chown -R ubuntu:ubuntu /home/ubuntu'
 write_files:
   - path: /etc/sysctl.d/10-disable-ipv6.conf
     permissions: '0644'
