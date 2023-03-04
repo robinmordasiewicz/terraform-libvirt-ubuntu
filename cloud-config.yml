@@ -34,10 +34,10 @@ apt:
       hashicorp:
           source: "deb [signed-by=$KEY_FILE] https://apt.releases.hashicorp.com jammy main"
           keyid: "AA16FCBCA621E701"
-byobu_by_default: enable-system
 system_info:
   default_user:
     name: ubuntu
+    shell: /bin/zsh
     primary_group: dialout
     no_user_group: true
     lock_passwd: false
@@ -76,6 +76,7 @@ packages:
   - terraform
   - code
   - powershell
+  - byobu
 runcmd:
   - [ sysctl, -w, net.ipv6.conf.all.disable_ipv6=1 ]
   - [ sysctl, -w, net.ipv6.conf.default.disable_ipv6=1 ]
@@ -93,6 +94,7 @@ runcmd:
   - pip3 install sphobjinv
   - 'usermod -u 502 ubuntu'
   - 'groupmod -n ubuntu dialout'
+  - 'su -l ubuntu: byobu-enable'
   - 'chown -R ubuntu:ubuntu /home/ubuntu'
 write_files:
   - path: /etc/sysctl.d/10-disable-ipv6.conf
