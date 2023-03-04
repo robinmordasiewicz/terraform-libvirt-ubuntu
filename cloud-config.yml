@@ -102,3 +102,13 @@ write_files:
       net.ipv6.conf.all.disable_ipv6 = 1
       net.ipv6.conf.default.disable_ipv6 = 1
       net.ipv6.conf.lo.disable_ipv6 = 1
+ansible:
+  install_method: distro
+  package_name: ansible
+  run_user: ubuntu
+  galaxy:
+    actions:
+      - ["ansible-galaxy", "install", "gantsign.oh-my-zsh"]
+  pull:
+    url: "https://github.com/robinmordasiewicz/linux-userland.git"
+    playbook_name: "userland.yml"
