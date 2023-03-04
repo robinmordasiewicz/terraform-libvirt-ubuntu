@@ -12,7 +12,7 @@ power_state:
   message: Rebooting the OS
   condition: if [ -e /var/run/reboot-required ]; then exit 0; else exit 1; fi
 package_reboot_if_required: True
-ssh_pwauth: true
+ssh_pwauth: false
 chpasswd: {expire: False}
 byobu_by_default: enable
 apt:
@@ -48,13 +48,20 @@ users:
     gecos: Robin Mordasiewicz
     shell: /bin/zsh
     primary_group: staff
+    no_create_home: true
     no_user_group: true
     groups: [adm, audio, cdrom, dialout, floppy, video, plugdev, dip, netdev, libvirtd, docker]
-    lock_passwd: false
-    plain_text_passwd: 'ubuntu'
     sudo: ALL=(ALL) NOPASSWD:ALL
     ssh-authorized-keys:
       - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDSdoYYNIIHYomBNnA96JSeTv/EHtdpi9j/DxdYPtCJwtmJsSwSdGmJ35KpvEHrhWXYKvXXamG1n9EivZimGq5SCT91Gx2bRIfXVYnKVPjbl+/SCf/M4V21bsBe+Bmh42GgUx0IqJPHPR+h47qwZJmD3OMwJNZcu1Lefz36RPnSqYSCcKFWO7rU9OpJGtMyWaj3MlA0T1hxyzXnVW01mvIuaALLPnkBWGtoW8f2KjQV2YV+5bOyP4unseCC70ExmyDAR42cjvINuHK+mBbrWrX+SnPegeMcIX3heaPoWJbJij6woXgSAa5+2poyZC8RvXjKYVnyhofc6pyWWGZVD3U3Ayedk56KO9ziPq0Rp95epbcGjaALBeZ/u5xCZQQl7H5RrsuwzigvltnLTNlBXf2q2mkV88vgr2Ez/GIXNx35YCXluBnVmdqIGAIpA/xVA2bhjFCrc0JRAh2DsptoiMOXM4/3GWgWuPmQa+2Z15O7ZCfB6ewWsCA/r/u9XG44V3E= robin@workstation
+  - name: zeul
+    gecos: Zeulewan Mordasiewicz
+    shell: /bin/zsh
+    primary_group: staff
+    no_user_group: true
+    no_create_home: true
+    groups: [adm, audio, cdrom, dialout, floppy, video, plugdev, dip, netdev, libvirtd, docker]
+    sudo: ALL=(ALL) NOPASSWD:ALL
 packages:
   - qemu-guest-agent
   - vim
@@ -116,16 +123,6 @@ write_files:
       net.ipv6.conf.all.disable_ipv6 = 1
       net.ipv6.conf.default.disable_ipv6 = 1
       net.ipv6.conf.lo.disable_ipv6 = 1
-ansible:
-  install_method: distro
-  package_name: ansible
-  run_user: robin
-  galaxy:
-    actions:
-      - ["ansible-galaxy", "install", "gantsign.oh-my-zsh"]
-  pull:
-    url: "https://github.com/robinmordasiewicz/linux-userland.git"
-    playbook_name: "userland.yml"
 
 # add each entry to ~/.ssh/authorized_keys for the configured user or the
 # first user defined in the user definition directive.
