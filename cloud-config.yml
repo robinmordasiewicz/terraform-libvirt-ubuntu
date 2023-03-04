@@ -14,6 +14,7 @@ power_state:
 package_reboot_if_required: True
 ssh_pwauth: false
 chpasswd: {expire: False}
+byobu_by_default: enable
 apt:
   sources:
       powershell:
@@ -89,6 +90,7 @@ packages:
   - byobu
   - elinks
   - google-chrome-stable
+  - nfs-common
 runcmd:
   - [ sysctl, -w, net.ipv6.conf.all.disable_ipv6=1 ]
   - [ sysctl, -w, net.ipv6.conf.default.disable_ipv6=1 ]
