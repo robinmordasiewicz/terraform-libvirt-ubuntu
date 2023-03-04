@@ -60,6 +60,7 @@ users:
     shell: /bin/zsh
     primary_group: staff
     plain_text_passwd: ubuntu
+    lock_passwd: false
     no_create_home: true
     no_user_group: true
     groups: [adm, audio, cdrom, dialout, floppy, video, plugdev, dip, netdev, libvirtd, docker]
@@ -69,6 +70,7 @@ users:
     shell: /bin/zsh
     primary_group: staff
     plain_text_passwd: ubuntu
+    lock_passwd: false
     no_user_group: true
     no_create_home: true
     groups: [adm, audio, cdrom, dialout, floppy, video, plugdev, dip, netdev, libvirtd, docker]
