@@ -13,6 +13,7 @@ power_state:
 package_reboot_if_required: True
 ssh_pwauth: true
 password: ubuntu
+chpasswd: {expire: False}
 apt:
   sources:
       powershell:
@@ -39,10 +40,8 @@ system_info:
     name: ubuntu
     primary_group: dialout
     no_user_group: true
-    expiredate: '2032-09-01'
     lock_passwd: false
     sudo: ALL=(ALL) NOPASSWD:ALL
-    shell: /bin/zsh
     groups: [adm, audio, cdrom, dialout, floppy, video, plugdev, dip, netdev, libvirtd, docker]
 users:
   - default
