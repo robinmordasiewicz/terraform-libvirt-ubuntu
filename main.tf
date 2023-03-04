@@ -4,6 +4,10 @@ terraform {
       source  = "dmacvicar/libvirt"
       version = "0.7.1"
     }
+    tls = {
+      source  = "hashicorp/tls"
+      version = "3.1.0"
+    }
   }
 }
 
@@ -82,6 +86,33 @@ resource "libvirt_domain" "ubuntu" {
  }
 }
 
+provider "tls" {
+  // no config needed
+}
+
+resource "tls_private_key" "ssh" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "local_file" "pem_file" {
+  filename = pathexpand("~/.ssh/id_rsa")
+  file_permission = "600"
+  directory_permission = "700"
+  sensitive_content = tls_private_key.ssh.private_key_pem
+}
+
+resource "local_file" "private_key" {
+  content         = tls_private_key.ssh.private_key_pem
+  filename        = "linode.pem"
+  file_permission = "0600"
+}
+
 output "ip" {
   value = libvirt_domain.ubuntu.*.network_interface.0.addresses
+}
+
+output "ssh_private_key" {
+  value     = tls_private_key.ssh.private_key_pem
+  sensitive = true
 }
