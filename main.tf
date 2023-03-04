@@ -55,7 +55,7 @@ resource "libvirt_domain" "ubuntu" {
  cloudinit = libvirt_cloudinit_disk.cloud-config.id
 
  network_interface {
-  macvtap = "enp109s0"
+  macvtap = "enp108s0"
   wait_for_lease = true
  }
 
