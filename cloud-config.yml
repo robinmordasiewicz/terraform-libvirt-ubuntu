@@ -54,7 +54,6 @@ apt:
 mounts:
   - ["192.168.1.17:/volume1/homes", "/home", "nfs4", "rw,hard,intr,rsize=8192,wsize=8192,timeo=14", "0", "0"]
 users:
-  - default
   - name: robin
     gecos: Robin Mordasiewicz
     shell: /bin/zsh
