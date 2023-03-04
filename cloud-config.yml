@@ -30,7 +30,7 @@ apt:
           keyid: "B53DC80D13EDEF05"
       google-chrome:
           source: "deb [arch=amd64 signed-by=$KEY_FILE] http://dl.google.com/linux/chrome/deb/ stable main"
-          keyid: "B53DC80D13EDEF05"
+          keyid: "4EB27DB2A3B88B8B"
       docker: 
           source: "deb [arch=amd64 signed-by=$KEY_FILE] https://download.docker.com/linux/ubuntu jammy stable"
           keyid: "8D81803C0EBFCD88"
