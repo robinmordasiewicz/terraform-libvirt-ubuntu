@@ -44,19 +44,18 @@ apt:
           keyid: "AA16FCBCA621E701"
 mounts:
   - ["192.168.1.17:/volume1/homes", "/home", "nfs4", "rw,hard,intr,rsize=8192,wsize=8192,timeo=14", "0", "0"]
-system_info:
-  default_user:
-    name: robin
+users:
+  - name: robin
+    gecos: Robin Mordasiewicz
     shell: /bin/zsh
-    primary_group: 20
+    primary_group: staff
     no_user_group: true
+    groups: [adm, audio, cdrom, dialout, floppy, video, plugdev, dip, netdev, libvirtd, docker]
     lock_passwd: false
+    plain_text_passwd: 'ubuntu'
+    sudo: ALL=(ALL) NOPASSWD:ALL
     ssh-authorized-keys:
       - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDSdoYYNIIHYomBNnA96JSeTv/EHtdpi9j/DxdYPtCJwtmJsSwSdGmJ35KpvEHrhWXYKvXXamG1n9EivZimGq5SCT91Gx2bRIfXVYnKVPjbl+/SCf/M4V21bsBe+Bmh42GgUx0IqJPHPR+h47qwZJmD3OMwJNZcu1Lefz36RPnSqYSCcKFWO7rU9OpJGtMyWaj3MlA0T1hxyzXnVW01mvIuaALLPnkBWGtoW8f2KjQV2YV+5bOyP4unseCC70ExmyDAR42cjvINuHK+mBbrWrX+SnPegeMcIX3heaPoWJbJij6woXgSAa5+2poyZC8RvXjKYVnyhofc6pyWWGZVD3U3Ayedk56KO9ziPq0Rp95epbcGjaALBeZ/u5xCZQQl7H5RrsuwzigvltnLTNlBXf2q2mkV88vgr2Ez/GIXNx35YCXluBnVmdqIGAIpA/xVA2bhjFCrc0JRAh2DsptoiMOXM4/3GWgWuPmQa+2Z15O7ZCfB6ewWsCA/r/u9XG44V3E= robin@workstation
-    sudo: ALL=(ALL) NOPASSWD:ALL
-    groups: [adm, audio, cdrom, dialout, floppy, video, plugdev, dip, netdev, libvirtd, docker]
-users:
-  - default
 packages:
   - qemu-guest-agent
   - vim
