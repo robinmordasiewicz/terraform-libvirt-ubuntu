@@ -1,0 +1,208 @@
+#cloud-config
+# vim: syntax=yaml
+timezone: US/Eastern
+package_update: true
+package_upgrade: true
+hostname: workstation
+fqdn: workstation.example.com
+prefer_fqdn_over_hostname: true
+power_state:
+  mode: reboot
+  delay: now
+  message: Rebooting the OS
+  condition: if [ -e /var/run/reboot-required ]; then exit 0; else exit 1; fi
+package_reboot_if_required: True
+ssh_pwauth: true
+password: ubuntu
+chpasswd: {expire: False}
+apt:
+  sources:
+      powershell:
+          source: "deb [arch=amd64 signed-by=$KEY_FILE] https://packages.microsoft.com/ubuntu/22.04/prod jammy main"
+          keyid: "EB3E94ADBE1229CF"
+      vscode:
+          source: "deb [arch=amd64 signed-by=$KEY_FILE] https://packages.microsoft.com/repos/vscode stable main"
+          keyid: "EB3E94ADBE1229CF"
+      teams:
+          source: "deb [arch=amd64] https://packages.microsoft.com/repos/ms-teams stable main"
+          keyid: "EB3E94ADBE1229CF"
+      kubernetes:
+          source: "deb [arch=amd64 signed-by=$KEY_FILE] https://apt.kubernetes.io/ kubernetes-xenial main"
+          keyid: "B53DC80D13EDEF05"
+      google-chrome:
+          source: 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main'
+          keyid: "EB4C1BFD4F042F6DDDCCEC917721F63BD38B4796"
+      docker: 
+          source: "deb [arch=amd64 signed-by=$KEY_FILE] https://download.docker.com/linux/ubuntu jammy stable"
+          keyid: "8D81803C0EBFCD88"
+      github-cli:
+          source: "deb [arch=amd64 signed-by=$KEY_FILE] https://cli.github.com/packages stable main"
+          keyid: "23F3D4EA75716059"
+      hashicorp:
+          source: "deb [signed-by=$KEY_FILE] https://apt.releases.hashicorp.com jammy main"
+          keyid: "AA16FCBCA621E701"
+system_info:
+  default_user:
+    name: ubuntu
+    shell: /bin/zsh
+    primary_group: dialout
+    no_user_group: true
+    lock_passwd: false
+    ssh-authorized-keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQD7EVJwjupS+AK0yS27OrNSz8psHM+mXf/gWUiMc7yc8BuoADwtwqGgzrrkYXnTzARWFnYoDCUpR63UoBJUIZOQkUPhMVCnXEhyEIiomkeXqHEV5N1HaowDGTh0wfPEH4t3hp0ZLBLEmzvaRGpWagCEPii1iwwle+hjY492EzSwUPuc9i6c1Q8V9/ieH+J09GoJbmdXvIFiojUf+d6/mxLTwU71Zh++AghqeMPCWoa80wnnNfd6DBhKKVttSjYLNkc1wLdGEtPHv3/huXbK/lr2FW700nj8a0zNBW//kSvAABffGoI5/8vK5Wj8p7OHGaMka5Yn82fe1blJXsAGAJ55thQjPBpFJ1poawswbfO3G0eDH2qed674sxj5qsYw0e1aI7dVZglk37wN0lcq619/vnbTHMKQtkAXbHCbNpCgI6BIp8vMrcVQeyuSUqRVwsvyEUwzhZwlI3iEUtl5vexivmK/ARc7L2Kfv2VUHfUClTY6DsMajzaC+lvEtc5jADE= r.mordasiewicz@FP4MC6YJ4X
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: [adm, audio, cdrom, dialout, floppy, video, plugdev, dip, netdev, libvirtd, docker]
+users:
+  - default
+packages:
+  - qemu-guest-agent
+  - vim
+  - git
+  - zsh
+  - software-properties-common
+  - gnupg2
+  - curl
+  - apt-transport-https 
+  - gnupg-agent
+  - ca-certificates
+  - lsb-release
+  - bash-completion
+  - wget
+  - jq
+  - yamllint
+  - moreutils
+  - python3-sphinx
+  - python3-pip
+  - python3.9
+  - build-essential
+  - fonts-powerline
+  - powerline
+  - fzf
+  - speedtest-cli
+  - kubectl
+  - docker-ce
+  - gh
+  - terraform
+  - code
+  - powershell
+  - byobu
+  - elinks
+  - google-chrome-stable
+runcmd:
+  - [ sysctl, -w, net.ipv6.conf.all.disable_ipv6=1 ]
+  - [ sysctl, -w, net.ipv6.conf.default.disable_ipv6=1 ]
+  - [ sysctl, -w, net.ipv6.conf.lo.disable_ipv6=1 ]
+  - [ systemctl, daemon-reload ]
+  - [ systemctl, start, qemu-guest-agent ]
+  - [ systemctl, enable, docker ]
+  - [ systemctl, start, docker ]
+  - curl -LO "https://vesio.azureedge.net/releases/vesctl/$(curl -s https://downloads.volterra.io/releases/vesctl/latest.txt)/vesctl.linux-amd64.gz"
+  - gunzip vesctl.linux-amd64.gz
+  - mv vesctl.linux-amd64 /usr/local/bin/vesctl
+  - chown root:root /usr/local/bin/vesctl
+  - chmod 755 /usr/local/bin/vesctl
+  - vesctl completion bash > /etc/bash_completion.d/vesctl > /dev/null
+  - usermod -u 502 ubuntu
+  - groupmod -n ubuntu dialout
+  - su -l -s /bin/zsh -c byobu-enable ubuntu
+  - chown -R ubuntu:ubuntu /home/ubuntu
+write_files:
+  - path: /etc/sysctl.d/10-disable-ipv6.conf
+    permissions: '0644'
+    owner: root
+    content: |
+      net.ipv6.conf.all.disable_ipv6 = 1
+      net.ipv6.conf.default.disable_ipv6 = 1
+      net.ipv6.conf.lo.disable_ipv6 = 1
+ansible:
+  install_method: distro
+  package_name: ansible
+  run_user: ubuntu
+  galaxy:
+    actions:
+      - ["ansible-galaxy", "install", "gantsign.oh-my-zsh"]
+  pull:
+    url: "https://github.com/robinmordasiewicz/linux-userland.git"
+    playbook_name: "userland.yml"
+
+# add each entry to ~/.ssh/authorized_keys for the configured user or the
+# first user defined in the user definition directive.
+ssh_authorized_keys:
+  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQD7EVJwjupS+AK0yS27OrNSz8psHM+mXf/gWUiMc7yc8BuoADwtwqGgzrrkYXnTzARWFnYoDCUpR63UoBJUIZOQkUPhMVCnXEhyEIiomkeXqHEV5N1HaowDGTh0wfPEH4t3hp0ZLBLEmzvaRGpWagCEPii1iwwle+hjY492EzSwUPuc9i6c1Q8V9/ieH+J09GoJbmdXvIFiojUf+d6/mxLTwU71Zh++AghqeMPCWoa80wnnNfd6DBhKKVttSjYLNkc1wLdGEtPHv3/huXbK/lr2FW700nj8a0zNBW//kSvAABffGoI5/8vK5Wj8p7OHGaMka5Yn82fe1blJXsAGAJ55thQjPBpFJ1poawswbfO3G0eDH2qed674sxj5qsYw0e1aI7dVZglk37wN0lcq619/vnbTHMKQtkAXbHCbNpCgI6BIp8vMrcVQeyuSUqRVwsvyEUwzhZwlI3iEUtl5vexivmK/ARc7L2Kfv2VUHfUClTY6DsMajzaC+lvEtc5jADE= r.mordasiewicz@FP4MC6YJ4X
+
+# Send pre-generated SSH private keys to the server
+# If these are present, they will be written to /etc/ssh and
+# new random keys will not be generated
+#  in addition to 'rsa' and 'dsa' as shown below, 'ecdsa' is also supported
+ssh_keys:
+  rsa_private: |
+    -----BEGIN RSA PRIVATE KEY-----
+    b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAABlwAAAAdzc2gtcn
+    NhAAAAAwEAAQAAAYEA1c/9TyQIxcIQ/1XccoIsp6v4QIttpZ/8fGYdX1YMDueBN8w8Wc8d
+    j3gnX7oZTX9Nr0iDsLogqJwqd/VxbiM1X1SIRyVN0cjFRP1sxp+rX7MvEJPwDM/uH9YbYG
+    KDkQHS1XJTeCwFEWLkUoqKdOEgVqMkJl8aNQylfe+bhd+dyq3k4zvI1bEb/PN7CDWdeqlC
+    TmveFOpv0t/IGPPHr79vUp9L2dWbpjcPkMNAjW1RyjqSMuPHRZyCC9+KuDUvqKLi1yRH+q
+    lEEy0WHjQLdeC1V/5e7s2hQFM3/Wsbbi0LwZ68evOByvLOFzDBq7erzLIfkVF1NER4ChQy
+    o5cMbfLZYstp+Iylime2ucDL3bS4+ZzWULHmJrl2wlY7AM25/syMU4N/NBE79SDWhkzRJ2
+    jT1kRF9J8w5SxO3Kgu1zbRweJASvTJdvmhky/NyO999OiRuBR7pRQ+1UO+bHj/BFMG3iU6
+    g3QLPab1wOtUvxvYUjkSJwlk55rWZFcxIoBHksjFAAAFmIB9toeAfbaHAAAAB3NzaC1yc2
+    EAAAGBANXP/U8kCMXCEP9V3HKCLKer+ECLbaWf/HxmHV9WDA7ngTfMPFnPHY94J1+6GU1/
+    Ta9Ig7C6IKicKnf1cW4jNV9UiEclTdHIxUT9bMafq1+zLxCT8AzP7h/WG2Big5EB0tVyU3
+    gsBRFi5FKKinThIFajJCZfGjUMpX3vm4Xfncqt5OM7yNWxG/zzewg1nXqpQk5r3hTqb9Lf
+    yBjzx6+/b1KfS9nVm6Y3D5DDQI1tUco6kjLjx0Wcggvfirg1L6ii4tckR/qpRBMtFh40C3
+    XgtVf+Xu7NoUBTN/1rG24tC8GevHrzgcryzhcwwau3q8yyH5FRdTREeAoUMqOXDG3y2WLL
+    afiMpYpntrnAy920uPmc1lCx5ia5dsJWOwDNuf7MjFODfzQRO/Ug1oZM0Sdo09ZERfSfMO
+    UsTtyoLtc20cHiQEr0yXb5oZMvzcjvffTokbgUe6UUPtVDvmx4/wRTBt4lOoN0Cz2m9cDr
+    VL8b2FI5EicJZOea1mRXMSKAR5LIxQAAAAMBAAEAAAGAKvcQNoKNtrugMccdtO7+rTTr/o
+    BmKLWlBZR5i4pdgvM3brB+YieyD338H4rkgcO2pyYBvJYycN9s001BnXm6xGzWs8FFyYW4
+    SnxIiwNT6ze1GfY4c0KnXcNnHe+983oz1UuThV8HJ67BJesMFp+UoYRIA+Pxfr6LVOq8zG
+    KasTtPdvAxE+vyrVp6GzS28AqqNdsMNhTEItJwQb9fHaxw4N/83InFrNl8qcDqrGDO4j3x
+    2gMWrKDeKyehFxItAQy1/aZc8avUIfW5yQSWe1ymYR3mqzORQ5csTlGZDUi/5sTeRt+Ikh
+    cIQrMyXGNMXXGvv6DaKnnwQWrzGO+0moZO+vX/a2dGu/QLZPKh5e5+bUvnk8dEpuoI/hf6
+    MbOROlEKzJKXBraQOT8zBSwU3O1HeM92xgdNINOQ119dzAriNas9k3qqrpehCwejp90wmC
+    4B9XxO9fWjlMiAkPbRIWJJTQOa0NlodwD4mrzFaAdG8+fRK2+Ei6Wd6xkJ94k0JorzAAAA
+    wFBcjDGTABeBTM3415FeUO9CalDFdlTXCdyHzwJiaz9SlfkeEDc7t3tPPNtWyg4aEL2T4q
+    JeJEzFpv709oRkZoBgXcRuboTX6KvzfTNvAi7rqK5/iz9KSJwDMTr9kFcc4zHjYLdgny8k
+    CMIS/f5wqdMHubuvZKfLuVmI4JIcEDlcxSUeHtxiW9xnNebiF2y+pqoxbVOKblLCrBIJ9V
+    9nIRSVrwDbCN9H5rXyhNaa3r1oP3JLCm2Vc51BqWAF5bmPsgAAAMEA4vBNHFMK44/WQd++
+    xR6Ef+U+t1ZvQUFSYK8jkjq/aM7H5cHOuc2cRCXqKNxwzgAskpO1B+XXqU6gDqkjG3Bopc
+    KkgrJqrzBmKqCJ3U9gdCQfe86zNW5yKxgehFFJmMUs2QZn+2L4VVvqKfgLbKxvlBIPTvPL
+    d8AQJUH0E8txjDVQWgDCe5VMZVwRhiVcCYlqW/JjqN2j5d/wHj9N18S33NIWXJtZMb1oIh
+    7tuoYeVGBR3XIc849eGlJqdnn1sjarAAAAwQDxMV+SIZY2+YBiGamKh4x+Pw4i8/lWuI7W
+    XNPF8g+1AW0oRa8H8GHVdpwTQTsd1czogsvv6asIhmzX62Iyxv3NCub3FAJczzt30/kYSd
+    A629hXMujMmTti7GxxzKKrcJBnYeTR/kQYJVW2SE+3St7lhcyFV1vmYJkMykmqPhuH+wmv
+    CAbXRLt0FdVnrYTxiCXJFS/1NCK8iUR5mv3Ozc1SnrGR/7GF/VSDvfJjgFCjoC6+bK5iFc
+    LwnEf/SacDvk8AAAAccm9vdEB3b3Jrc3RhdGlvbi5leGFtcGxlLmNvbQECAwQFBgc=
+    -----END RSA PRIVATE KEY-----
+
+  rsa_public: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDVz/1PJAjFwhD/Vdxygiynq/hAi22ln/x8Zh1fVgwO54E3zDxZzx2PeCdfuhlNf02vSIOwuiConCp39XFuIzVfVIhHJU3RyMVE/WzGn6tfsy8Qk/AMz+4f1htgYoORAdLVclN4LAURYuRSiop04SBWoyQmXxo1DKV975uF353KreTjO8jVsRv883sINZ16qUJOa94U6m/S38gY88evv29Sn0vZ1ZumNw+Qw0CNbVHKOpIy48dFnIIL34q4NS+oouLXJEf6qUQTLRYeNAt14LVX/l7uzaFAUzf9axtuLQvBnrx684HK8s4XMMGrt6vMsh+RUXU0RHgKFDKjlwxt8tliy2n4jKWKZ7a5wMvdtLj5nNZQseYmuXbCVjsAzbn+zIxTg380ETv1INaGTNEnaNPWREX0nzDlLE7cqC7XNtHB4kBK9Ml2+aGTL83I73306JG4FHulFD7VQ75seP8EUwbeJTqDdAs9pvXA61S/G9hSORInCWTnmtZkVzEigEeSyMU= root@workstation.example.com
+
+  dsa_private: |
+    -----BEGIN DSA PRIVATE KEY-----
+    b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAABsgAAAAdzc2gtZH
+    NzAAAAgQC7Asih0rIeSpxC+FTkG1wYb1i7ThZecSWQPbMTt3XKnPiQq5y1esQttS18e/Dq
+    tlDgBJbcyBqmPnqIyIORRKOsQP1S3DY0u/69rEwOD2weiL4cJN/dpMeqXF0uJ3tekZandE
+    o1eWw4CNf2YKdGqW7Jzqbqj8IenYs8FpZ+wVadzQAAABUA7vTnoAVRyahM0YZeTEqVfJ2z
+    S2UAAACAF1ELO0JjQCGzg5vE50XWeces1t7BnbwdVhPavpBzW6jHLovchlZpTJvjNbty8A
+    sx2V3b9yhU8ucIF6oqkBOrS7qzqJ7gyvDNsongwXAtfS6JPYfjvpJZ6B4MhFSoMAW9Z/pM
+    MKaDJJiC0POk0/p+7ER3u8h9OqUQZCkRvy0eS3IAAACBAIvbulij5iuUZLdPKfZuTUxCle
+    A6DdxlhF/O7q6xYE9a/Dhn11obpMwre2EvLcO6NA13e7IiKVp9iHGpwQJyOYMG+wQ4gIxo
+    bNwcVw0EVCG2fdsgkRUDJp4soQ/9oVZrtddErGFDt6CYsCib2KObKU44ZiTNpK44ojtRQ+
+    G39/E0AAAB+NNtVFTTbVRUAAAAB3NzaC1kc3MAAACBALsCyKHSsh5KnEL4VOQbXBhvWLtO
+    Fl5xJZA9sxO3dcqc+JCrnLV6xC21LXx78Oq2UOAEltzIGqY+eojIg5FEo6xA/VLcNjS7/r
+    2sTA4PbB6Ivhwk392kx6pcXS4ne16Rlqd0SjV5bDgI1/Zgp0apbsnOpuqPwh6dizwWln7B
+    Vp3NAAAAFQDu9OegBVHJqEzRhl5MSpV8nbNLZQAAAIAXUQs7QmNAIbODm8TnRdZ5x6zW3s
+    GdvB1WE9q+kHNbqMcui9yGVmlMm+M1u3LwCzHZXdv3KFTy5wgXqiqQE6tLurOonuDK8M2y
+    ieDBcC19Lok9h+O+klnoHgyEVKgwBb1n+kwwpoMkmILQ86TT+n7sRHe7yH06pRBkKRG/LR
+    5LcgAAAIEAi9u6WKPmK5Rkt08p9m5NTEKV4DoN3GWEX87urrFgT1r8OGfXWhukzCt7YS8t
+    w7o0DXd7siIpWn2IcanBAnI5gwb7BDiAjGhs3BxXDQRUIbZ92yCRFQMmniyhD/2hVmu110
+    SsYUO3oJiwKJvYo5spTjhmJM2krjiiO1FD4bf38TQAAAAURD4NiaDbcEq17f07k0v4GQ+u
+    4ekAAAAccm9vdEB3b3Jrc3RhdGlvbi5leGFtcGxlLmNvbQECAwQFBg==
+    -----END DSA PRIVATE KEY-----
+
+  dsa_public: ssh-dss AAAAB3NzaC1kc3MAAACBALsCyKHSsh5KnEL4VOQbXBhvWLtOFl5xJZA9sxO3dcqc+JCrnLV6xC21LXx78Oq2UOAEltzIGqY+eojIg5FEo6xA/VLcNjS7/r2sTA4PbB6Ivhwk392kx6pcXS4ne16Rlqd0SjV5bDgI1/Zgp0apbsnOpuqPwh6dizwWln7BVp3NAAAAFQDu9OegBVHJqEzRhl5MSpV8nbNLZQAAAIAXUQs7QmNAIbODm8TnRdZ5x6zW3sGdvB1WE9q+kHNbqMcui9yGVmlMm+M1u3LwCzHZXdv3KFTy5wgXqiqQE6tLurOonuDK8M2yieDBcC19Lok9h+O+klnoHgyEVKgwBb1n+kwwpoMkmILQ86TT+n7sRHe7yH06pRBkKRG/LR5LcgAAAIEAi9u6WKPmK5Rkt08p9m5NTEKV4DoN3GWEX87urrFgT1r8OGfXWhukzCt7YS8tw7o0DXd7siIpWn2IcanBAnI5gwb7BDiAjGhs3BxXDQRUIbZ92yCRFQMmniyhD/2hVmu110SsYUO3oJiwKJvYo5spTjhmJM2krjiiO1FD4bf38TQ= root@workstation.example.com
+
+no_ssh_fingerprints: false
+
+ssh:
+  emit_keys_to_console: true

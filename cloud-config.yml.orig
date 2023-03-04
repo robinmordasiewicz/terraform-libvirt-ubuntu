@@ -12,7 +12,8 @@ power_state:
   message: Rebooting the OS
   condition: if [ -e /var/run/reboot-required ]; then exit 0; else exit 1; fi
 package_reboot_if_required: True
-ssh_pwauth: false
+ssh_pwauth: true
+password: ubuntu
 chpasswd: {expire: False}
 apt:
   sources:
@@ -40,8 +41,6 @@ apt:
       hashicorp:
           source: "deb [signed-by=$KEY_FILE] https://apt.releases.hashicorp.com jammy main"
           keyid: "AA16FCBCA621E701"
-mounts:
-  - ["192.168.1.17:/volume1/homes", "/home", "nfs4", "rw,hard,intr,rsize=8192,wsize=8192,timeo=14", "0", "0"]
 system_info:
   default_user:
     name: ubuntu
@@ -105,6 +104,8 @@ runcmd:
   - vesctl completion bash > /etc/bash_completion.d/vesctl > /dev/null
   - usermod -u 502 ubuntu
   - groupmod -n ubuntu dialout
+  - su -l -s /bin/zsh -c byobu-enable ubuntu
+  - chown -R ubuntu:ubuntu /home/ubuntu
 write_files:
   - path: /etc/sysctl.d/10-disable-ipv6.conf
     permissions: '0644'

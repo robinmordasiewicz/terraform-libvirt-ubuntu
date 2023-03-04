@@ -95,11 +95,11 @@ resource "tls_private_key" "ssh" {
   rsa_bits  = 4096
 }
 
-resource "local_file" "pem_file" {
+resource "local_sensitive_file" "pem_file" {
   filename = pathexpand("~/.ssh/id_rsa")
   file_permission = "600"
   directory_permission = "700"
-  sensitive_content = tls_private_key.ssh.private_key_pem
+  content = tls_private_key.ssh.private_key_pem
 }
 
 resource "local_file" "private_key" {
@@ -108,30 +108,9 @@ resource "local_file" "private_key" {
   file_permission = "0600"
 }
 
-ssh_keys_user = {
-  write_files = [
-    {
-      path        = "/home/ubuntu/.ssh/id_rsa"
-      content     = file("/home/ubuntu/.ssh/id_rsa")
-      owner       = "ubuntu"
-      permissions = "0600"
-      defer       = true
-    },
-    {
-      path        = "/home/ubuntu/.ssh/id_rsa.pub"
-      content     = file("/home/ubuntu/.ssh/id_rsa.pub")
-      owner       = "ubuntu"
-      permissions = "0644"
-      defer       = true
-    }
-  ]
-}
-
-
 output "ssh_private_key" {
   value     = tls_private_key.ssh.private_key_pem
   sensitive = true
-  filename        = "ssh_private_key.pem"
 }
 
 output "ip" {
