@@ -85,7 +85,6 @@ packages:
   - byobu
   - elinks
   - google-chrome-stable
-  - teams
 runcmd:
   - [ sysctl, -w, net.ipv6.conf.all.disable_ipv6=1 ]
   - [ sysctl, -w, net.ipv6.conf.default.disable_ipv6=1 ]
@@ -100,11 +99,10 @@ runcmd:
   - chown root:root /usr/local/bin/vesctl
   - chmod 755 /usr/local/bin/vesctl
   - vesctl completion bash > /etc/bash_completion.d/vesctl > /dev/null
-  - pip3 install sphobjinv
-  - 'usermod -u 502 ubuntu'
-  - 'groupmod -n ubuntu dialout'
-  - 'su -l -s /bin/zsh -c byobu-enable ubuntu'
-  - 'chown -R ubuntu:ubuntu /home/ubuntu'
+  - usermod -u 502 ubuntu
+  - groupmod -n ubuntu dialout
+  - su -l -s /bin/zsh -c byobu-enable ubuntu
+  - chown -R ubuntu:ubuntu /home/ubuntu
 write_files:
   - path: /etc/sysctl.d/10-disable-ipv6.conf
     permissions: '0644'
