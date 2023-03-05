@@ -113,3 +113,7 @@ resource "libvirt_domain" "ubuntu" {
 output "ip" {
   value = libvirt_domain.ubuntu.*.network_interface.0.addresses
 }
+
+output "ips" {
+  value = libvirt_domain.ubuntu.network_interface[0].addresses[0]
+}
