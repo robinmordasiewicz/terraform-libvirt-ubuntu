@@ -11,7 +11,7 @@ power_state:
   mode: reboot
   delay: now
   message: Rebooting the OS
-  condition: if [ -e /var/run/reboot-required ]; then exit 0; else exit 1; fi
+#  condition: if [ -e /var/run/reboot-required ]; then exit 0; else exit 1; fi
 package_reboot_if_required: True
 ssh_pwauth: false
 password: ubuntu
