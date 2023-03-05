@@ -13,7 +13,7 @@ terraform {
 
 provider "libvirt" {
  #uri = "qemu:///system"
- uri = "qemu+ssh://robin@192.168.1.95/system?keyfile=/home/robin/.ssh/id_ed25519"
+ uri = "qemu+ssh://robin@192.168.1.95/system?keyfile=~/.ssh/id_ed25519"
 }
 
 # We fetch the latest ubuntu release image from their mirrors
