@@ -52,7 +52,7 @@ resource "libvirt_domain" "ubuntu" {
 
  network_interface {
   macvtap = "enp108s0"
-  wait_for_lease = true
+#  wait_for_lease = true
  }
 
  #cpu {
@@ -109,10 +109,10 @@ resource "libvirt_domain" "ubuntu" {
 #  sensitive = true
 #}
 
-output "ip" {
-  value = libvirt_domain.ubuntu.*.network_interface.0.addresses
-}
+#output "ip" {
+#  value = libvirt_domain.ubuntu.*.network_interface.0.addresses
+#}
 
-output "ips" {
-  value = libvirt_domain.ubuntu.network_interface[0].addresses[0]
-}
+#output "ips" {
+#  value = libvirt_domain.ubuntu.network_interface[0].addresses[0]
+#}

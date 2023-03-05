@@ -23,3 +23,5 @@ apt:
 
 
 terraform destroy -auto-approve && terraform apply -auto-approve
+
+terraform providers lock -platform=darwin_arm64
