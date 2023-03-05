@@ -2,7 +2,8 @@ terraform {
   required_providers {
     libvirt = {
       source  = "dmacvicar/libvirt"
-      version = "0.7.1"
+      #version = "0.7.1"
+      version = "0.6.10"
     }
 #    tls = {
 #      source  = "hashicorp/tls"
@@ -13,7 +14,7 @@ terraform {
 
 provider "libvirt" {
  #uri = "qemu:///system"
- uri = "qemu+ssh://robin@192.168.1.95/system?keyfile=~/.ssh/id_ed25519"
+ uri = "qemu+ssh://robin@192.168.1.95/system?keyfile=/Users/r.mordasiewicz/.ssh/id_ed25519"
 }
 
 # We fetch the latest ubuntu release image from their mirrors
@@ -56,9 +57,9 @@ resource "libvirt_domain" "ubuntu" {
   wait_for_lease = true
  }
 
- cpu {
-  mode = "host-passthrough"
- }
+ #cpu {
+ # mode = "host-passthrough"
+ #}
 
  console {
    type        = "pty"
